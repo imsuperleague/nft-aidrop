@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, TextArea, Tabs, Tab, TabItems, TabItem, Card } from 'ui-neumorphism'
+import { Fab, TextField, Button, TextArea, Tabs, Tab, TabItems, TabItem, Card } from 'ui-neumorphism'
 import { connectWallet, getCurrentWalletConnected, mintNFT, transNFT, multiSender } from './utils/interact'
 const Minter = (props) => {
 
@@ -12,6 +12,7 @@ const Minter = (props) => {
   const [url, setURL] = useState("QmcAvZhZCWNYtxdfzChKobU6sN2sAGFm5cEZUYv6BQLDiA");
   const [contractAddress, setContractAddress] = useState("0x6a7115bb32120C67120AD9B62869de859b9fA657");
   const [contractABI, setContractABI] = useState("");
+  const [airdropLines, setAirdropLines] = useState("0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2 \n 0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3");
 
   function addWalletListener() {
     if (window.ethereum) {
@@ -65,8 +66,9 @@ const Minter = (props) => {
   }
 
   const onMultiSendPressed = async () => {
-    const lines_data = ['0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2', '0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3']
-    const airdrops = dealLinesData(lines_data)
+    // const lines_data = ['0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2', '0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3']
+    const airdrops = dealLinesData(airdropLines.split('\n'))
+    console.log('airdrops: ', airdrops)
     const { status } = await multiSender({ airdrops })
     setStatus(status);
   }
@@ -85,9 +87,8 @@ const Minter = (props) => {
     try {
       lines_data.forEach(line => {
         const [recipient, tokenId] = line.split(',')
-        console.log(recipient, tokenId)
         airdrops.push({
-          recipient,
+          recipient: recipient.trim(),
           tokenId: parseInt(tokenId)
         })
       });
@@ -97,111 +98,126 @@ const Minter = (props) => {
     return airdrops
   }
 
-  return (
-    <Card flat className='px-4 fill-width'>
-      <button id="walletButton" onClick={connectWalletPressed}>
-            {walletAddress.length > 0 ? (
-              "Connected: " +
-              String(walletAddress).substring(0, 6) +
-              "..." +
-              String(walletAddress).substring(38)
-            ) : (
-              <span>Connect Wallet</span>
-            )}
-          </button>
-    <Card className='pa-4'>
-      <h1>ERC721 nft minted And Airdrop</h1>
-      
-      <Tabs value={active} onChange={( {active} ) => setActive(active)}>
-        <Tab>Mint NFT</Tab>
-        <Tab>Airdrop</Tab>
-      </Tabs>
-      <TabItems value={active}>
-        <TabItem>
-          <div className="Minter">
-            <form>
-              <h2>url of nft token image: </h2>
-              <input
-                type="text"
-                placeholder="e.g. https://your.domain.com/ipfs/<hash>"
-                onChange={(event) => setURL(event.target.value)}
-              />
-              <h2>ntf Name: </h2>
-              <input
-                type="text"
-                placeholder="e.g. My first NFT!"
-                onChange={(event) => setName(event.target.value)}
-              />
-              <h2>ntf  Description: </h2>
-              <input
-                type="text"
-                placeholder="e.g. Description... ;)"
-                onChange={(event) => setDescription(event.target.value)}
-              />
-            </form>
-            <button id="mintButton" onClick={onMintPressed}>
-              Mint NFT
-      </button>
-            <hr />
+  const ConnetWalletFab = (
+    <Fab color='#299ae6' onClick={connectWalletPressed}>
+      {walletAddress.length > 0 ? (
+        "🦊Connected: " +
+        String(walletAddress).substring(0, 6) +
+        "..." +
+        String(walletAddress).substring(38)
+      ) : (
+        <span>Connect Wallet</span>
+      )}
+    </Fab>
+  )
 
-          </div>
-        </TabItem>
-        <TabItem>
+  const MintTabItem = (
+    <TabItem>
+      <form>
+        <p>url of nft token image: </p>
+        <TextField
+          type="text"
+          width={300}
+          placeholder="e.g. https://your.domain.com/ipfs/<hash>"
+          onChange={(event) => setURL(event.target.value)}
+        />
+        <p>ntf Name: </p>
+        <TextField
+          type="text"
+          width={300}
+          placeholder="e.g. My first NFT!"
+          onChange={(event) => setName(event.target.value)}
+        />
+        <p>ntf  Description: </p>
+        <TextField
+          type="text"
+          width={300}
+          placeholder="e.g. Description... ;)"
+          onChange={(event) => setDescription(event.target.value)}
+        />
+      </form>
+      <Button color="blue" onClick={onMintPressed}>
+        Mint NFT
+            </Button>
+    </TabItem>
+  )
 
-          <div className="Minter">
-            {/* 
-      <button id="mintButton" onClick={onTransPressed}>
-        Trans NFT
-      </button>
+  const collTabItem = (
+    <TabItem>
+      none.
+    </TabItem>
+  )
 
-      <button id="mintButton" onClick={onMultiSendPressed}>
-        multi sender NFT / Airdrop
-      </button> */}
-            <form>
-              <h2>Contract of the NFT token</h2>
-              <input
-                type="text"
-                placeholder="contract address"
-                onChange={(event) => setContractAddress(event.target.value)}
-              />
-              <h2>ABI of the NFT Contract</h2>
-              <TextArea
-                type="text"
-                placeholder="contract abi"
-                width={500}
-                height={200}
-                onChange={(event) => setContractABI(event.target.value)}
-              />
-              <h2>Please provide list of recipients</h2>
-              <TextArea
-                type="text"
-                width={500}
-                height={200}
-                placeholder="address list and tokenId, see example. "
-                onChange={(event) => setContractABI(event.target.value)}
-              />
-              <p>example:</p>
-              <div className="example-div">
-                <p> for ERC721(address, id) </p>
-                <p>
-                  0x63Ed7e96CaA84CE8521874d7eE1Ed3bfEA38B316,60
-                  0x7B32C3158b7f193D3Ea33f5488175C499D492ca2,61
+  const airdropTabItem = (
+    <TabItem>
+      <form>
+        {/* <p>Contract of the NFT token</p>
+        <TextField
+          type="text"
+          width={300}
+          placeholder="contract address"
+          onChange={(event) => setContractAddress(event.target.value)}
+        />
+        <p>ABI of the NFT Contract</p>
+        <TextArea
+          type="text"
+          placeholder="contract abi"
+          width={300}
+          height={200}
+          onChange={(event) => setContractABI(event.target.value)}
+        /> */}
+        <p>Please provide list of recipients</p>
+        <TextArea
+          type="text"
+          width={300}
+          height={200}
+          placeholder="address list and tokenId, see example. "
+          value={airdropLines} onChange={({ value }) => {
+            setAirdropLines(value)
+          }}
+        />
+        {airdropLines}
+        <p>example:</p>
+        <div className="example-div">
+          <p> for ERC721(address, id) </p>
+          <p>
+            0x63Ed7e96CaA84CE8521874d7eE1Ed3bfEA38B316,60
+            0x7B32C3158b7f193D3Ea33f5488175C499D492ca2,61
           </p>
-              </div>
-            </form>
-            <Button onClick={onMultiSendPressed2}>
-              multi sender NFT / Airdrop with contract and abi
+        </div>
+      </form>
+      <br />
+      <Button outlined block color="blue" onClick={onMultiSendPressed}>
+        multi sender Airdrop
       </Button>
+      <br />
 
-            <p id="status">
-              {status}
-            </p>
-          </div>
-
-        </TabItem>
-      </TabItems>
-    </Card>
-    </Card>
+      <p id="status">
+        {status}
+      </p>
+    </TabItem>
+  )
+  return (
+    <div className="main-container">
+      <Card flat className='px-4 fill-width'>
+        {ConnetWalletFab}
+        <div className="title">
+          <h1>ERC721 nft minted And Airdrop</h1>
+        </div>
+        <Card className='pa-4'>
+          <Tabs value={active} onChange={({ active }) => setActive(active)}>
+            <Tab>Mint NFT</Tab>
+            <Tab>My Collections</Tab>
+            <Tab>Airdrop</Tab>
+          </Tabs>
+          <TabItems value={active} className="tab-items" height={1000}>
+            {MintTabItem}
+            {collTabItem}
+            {airdropTabItem}
+          </TabItems>
+        </Card>
+      </Card>
+    </div>
   );
 };
 

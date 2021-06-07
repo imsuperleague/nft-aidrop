@@ -170,7 +170,7 @@ export const transNFT = async ({ recipient, tokenId, contractAddress = default_c
 }
 
 export const multiSender = async ({airdrops, contractAddress = default_contractAddress,  contractABI = default_contract_abi }) => {
-    
+    console.log('multiSender: ', airdrops)
     //loadContract();
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);
     

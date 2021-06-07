@@ -1,27 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
-
+/* 
 body {
   margin: 0;
   font-family: 'Rubik';
   color: #254cdd;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
+} */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-.Minter {
+/* .Minter {
   max-width: 80vh;
   max-height: 80vh;
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
+} */
 
-}
-
+/* 
 input {
   border-top-style: hidden;
   border-right-style: hidden;
@@ -51,32 +51,27 @@ button {
   text-align: center;
   font-weight: bold;
   cursor:pointer;
-}
+} */
 
-#title {
-  padding-top: 32px;
+.title {
+  /* padding-top: 32px; */
+  padding: 24px 0;
+  margin: 0 auto;
+  text-align: center;
 }
 
 #status {
   color:red;
 }
 
-.uploadFile {
-  border: 4px dashed rgba(4, 4, 5, 0.1);
-  border-radius: 16px;
-  text-align: center;
-  padding: 32px 60px;
+
+.tab-items {
+  text-align: left;
+  padding: 20px;
+  margin: 0 auto;
 }
 
-#walletButton {
-  text-align: right;
-  float:right;
-  margin-bottom: 50px;
-  line-height: 16px;
-}
-
-#mintButton {
-  margin-top: 40px;
-  background-color: #254cdd;
-  color:white;
+.main-container {
+  margin: 10px auto;
+  width: 95%;
 }
