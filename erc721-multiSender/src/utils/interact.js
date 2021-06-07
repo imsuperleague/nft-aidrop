@@ -197,7 +197,7 @@ export const multiSender = async ({airdrops, contractAddress = default_contractA
     }
 }
 
-export const multiSender2 = async ({airdrops, contractAddress = default_contractAddress,  contractABI = default_contract_abi }) => {
+export const multiSender_1151 = async ({airdrops, contractAddress = default_contractAddress,  contractABI = default_contract_abi }) => {
     
     //loadContract();
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);

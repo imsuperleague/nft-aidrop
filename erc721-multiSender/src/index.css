@@ -75,3 +75,7 @@ button {
   margin: 10px auto;
   width: 95%;
 }
+
+.full-block {
+  width: 100%;
+}

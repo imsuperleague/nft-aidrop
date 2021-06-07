@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Fab, TextField, Button, TextArea, Tabs, Tab, TabItems, TabItem, Card } from 'ui-neumorphism'
-import { connectWallet, getCurrentWalletConnected, mintNFT, transNFT, multiSender } from './utils/interact'
+import { connectWallet, getCurrentWalletConnected, mintNFT, transNFT, multiSender, multiSender_1151 } from './utils/interact'
 const default_contract_abi = require('./contract-abi.json')
+const default_contract_abi_1151 = require('./contract-abi_1151.json')
 
 const Minter = (props) => {
 
@@ -15,6 +16,11 @@ const Minter = (props) => {
   const [contractAddress, setContractAddress] = useState("0x6a7115bb32120C67120AD9B62869de859b9fA657");
   const [contractABI, setContractABI] = useState(JSON.stringify(default_contract_abi));
   const [airdropLines, setAirdropLines] = useState("0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2 \n0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3");
+
+
+  const [contractAddress_1151, setContractAddress_1151] = useState("0x1f045aafe36444529beef4e37fd662451ed2c6fd");
+  const [contractABI_1151, setContractABI_1151] = useState(JSON.stringify(default_contract_abi_1151));
+  const [airdropLines_1151, setAirdropLines_1151] = useState("0xba0AE2D9412470627d98B417FFD1A423e26e3767, 1, 2\n0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d,2,3");
 
   function addWalletListener() {
     if (window.ethereum) {
@@ -75,6 +81,12 @@ const Minter = (props) => {
     setStatus(status);
   }
 
+  const onMultiSendPressed_1151 = async () => {
+    const airdrops = dealLinesData_1151(airdropLines_1151.split('\n'))
+    const { status } = await multiSender_1151({ airdrops, contractAddress: contractAddress_1151, contractABI: JSON.parse(contractABI_1151) })
+    setStatus(status);
+  }
+
   const dealLinesData = (lines_data) => {
     let airdrops = []
     // deal data
@@ -84,6 +96,23 @@ const Minter = (props) => {
         airdrops.push({
           recipient: recipient.trim(),
           tokenId: parseInt(tokenId)
+        })
+      });
+    } catch (err) {
+      console.log("wrong when deal with the data, please check the example.")
+    }
+    return airdrops
+  }
+
+  const dealLinesData_1151 = (lines_data) => {
+    let airdrops = []
+    try {
+      lines_data.forEach(line => {
+        const [recipient, tokenId, amount] = line.split(',')
+        airdrops.push({
+          to: recipient.trim(),
+          id: parseInt(tokenId),
+          amount: parseInt(amount),
         })
       });
     } catch (err) {
@@ -107,6 +136,7 @@ const Minter = (props) => {
 
   const MintTabItem = (
     <TabItem>
+      <h2>ERC721</h2>
       <form>
         <p>url of nft token image: </p>
         <TextField
@@ -148,7 +178,7 @@ const Minter = (props) => {
         <p>Contract of the NFT token</p>
         <TextField
           type="text"
-          width={500}
+          width={800}
           placeholder="contract address"
           value={contractAddress} onChange={({ value }) => setContractAddress(value)}
         />
@@ -156,19 +186,18 @@ const Minter = (props) => {
         <TextArea
           type="text"
           placeholder="contract abi"
-          width={500}
+          width={800}
           height={200}
           value={contractABI} onChange={({ value }) => setContractABI(value)}
         />
         <p>Please provide list of recipients</p>
         <TextArea
           type="text"
-          width={500}
+          width={800}
           height={200}
           placeholder="address list and tokenId, see example. "
           value={airdropLines} onChange={({ value }) => setAirdropLines(value)}
         />
-        {airdropLines}
         <p>example:</p>
         <div className="example-div">
           <p> for ERC721(address, id) </p>
@@ -189,25 +218,71 @@ const Minter = (props) => {
       </p>
     </TabItem>
   )
+
+  const airdropTabItem1155 = (
+    <TabItem>
+      <h2>ERC 1155</h2>
+      <form>
+        <p>Contract of the NFT token</p>
+        <TextField
+          type="text"
+          width={800}
+          placeholder="contract address"
+          value={contractAddress_1151} onChange={({ value }) => setContractAddress_1151(value)}
+        />
+        <p>ABI of the NFT Contract</p>
+        <TextArea
+          type="text"
+          placeholder="contract abi"
+          width={800}
+          height={200}
+          value={contractABI_1151} onChange={({ value }) => setContractABI_1151(value)}
+        />
+        <p>Please provide list of recipients</p>
+        <TextArea
+          type="text"
+          width={800}
+          height={200}
+          placeholder="address list and tokenId, see example. "
+          value={airdropLines_1151} onChange={({ value }) => setAirdropLines_1151(value)}
+        />
+        <p>example:</p>
+        <div className="example-div">
+          <p> for ERC721(address, id, amount) </p>
+          <p>
+          0xb50cA0C79F9dF405B708b3E517fC99FC12B7AdFB,1,100
+          0x57eC2aEFB7bA9237E6a83B03Bb7CecD5C494AcA1,2,95
+          </p>
+        </div>
+      </form>
+      <br />
+      <Button outlined block color="blue" onClick={onMultiSendPressed_1151}>
+        multi sender Airdrop 1151
+      </Button>
+      <br />
+
+      <p id="status">
+        {status}
+      </p>
+    </TabItem>
+  )
   return (
     <div className="main-container">
       <Card flat className='px-4 fill-width'>
         {ConnetWalletFab}
         <div className="title">
-          <h1>ERC721 nft minted And Airdrop</h1>
+          <h1>NFT multiSender Airdrop</h1>
         </div>
         <Card className='pa-4'>
           <Tabs value={active} onChange={({ active }) => setActive(active)}>
-            <Tab>Mint NFT</Tab>
-            <Tab>My Collections</Tab>
-            <Tab>Airdrop</Tab>
+            <Tab>721</Tab>
+            <Tab>1151</Tab>
           </Tabs>
           <TabItems value={active} className="tab-items" height={1000}>
-            {MintTabItem}
-            {collTabItem}
             {airdropTabItem}
+            {airdropTabItem1155}
           </TabItems>
-        </Card>
+          </Card>
       </Card>
     </div>
   );
