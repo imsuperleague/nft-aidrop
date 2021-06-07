@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Fab, TextField, Button, TextArea, Tabs, Tab, TabItems, TabItem, Card } from 'ui-neumorphism'
 import { connectWallet, getCurrentWalletConnected, mintNFT, transNFT, multiSender } from './utils/interact'
+const default_contract_abi = require('./contract-abi.json')
+
 const Minter = (props) => {
 
   //State variables
@@ -11,8 +13,8 @@ const Minter = (props) => {
   const [description, setDescription] = useState("hellow worl.d.");
   const [url, setURL] = useState("QmcAvZhZCWNYtxdfzChKobU6sN2sAGFm5cEZUYv6BQLDiA");
   const [contractAddress, setContractAddress] = useState("0x6a7115bb32120C67120AD9B62869de859b9fA657");
-  const [contractABI, setContractABI] = useState("");
-  const [airdropLines, setAirdropLines] = useState("0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2 \n 0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3");
+  const [contractABI, setContractABI] = useState(JSON.stringify(default_contract_abi));
+  const [airdropLines, setAirdropLines] = useState("0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2 \n0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3");
 
   function addWalletListener() {
     if (window.ethereum) {
@@ -69,15 +71,7 @@ const Minter = (props) => {
     // const lines_data = ['0xba0AE2D9412470627d98B417FFD1A423e26e3767, 2', '0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 3']
     const airdrops = dealLinesData(airdropLines.split('\n'))
     console.log('airdrops: ', airdrops)
-    const { status } = await multiSender({ airdrops })
-    setStatus(status);
-  }
-
-  const onMultiSendPressed2 = async () => {
-    const lines_data = ['0xba0AE2D9412470627d98B417FFD1A423e26e3767, 4', '0xCb274cCC5c16Ce5DC5aA2791d81a59b7f775003d, 5']
-    const airdrops = dealLinesData(lines_data)
-    let contractAddress = ''
-    const { status } = await multiSender({ airdrops, contractABI, contractAddress })
+    const { status } = await multiSender({ airdrops, contractAddress, contractABI: JSON.parse(contractABI) })
     setStatus(status);
   }
 
@@ -117,21 +111,21 @@ const Minter = (props) => {
         <p>url of nft token image: </p>
         <TextField
           type="text"
-          width={300}
+          width={500}
           placeholder="e.g. https://your.domain.com/ipfs/<hash>"
           onChange={(event) => setURL(event.target.value)}
         />
         <p>ntf Name: </p>
         <TextField
           type="text"
-          width={300}
+          width={500}
           placeholder="e.g. My first NFT!"
           onChange={(event) => setName(event.target.value)}
         />
         <p>ntf  Description: </p>
         <TextField
           type="text"
-          width={300}
+          width={500}
           placeholder="e.g. Description... ;)"
           onChange={(event) => setDescription(event.target.value)}
         />
@@ -151,30 +145,28 @@ const Minter = (props) => {
   const airdropTabItem = (
     <TabItem>
       <form>
-        {/* <p>Contract of the NFT token</p>
+        <p>Contract of the NFT token</p>
         <TextField
           type="text"
-          width={300}
+          width={500}
           placeholder="contract address"
-          onChange={(event) => setContractAddress(event.target.value)}
+          value={contractAddress} onChange={({ value }) => setContractAddress(value)}
         />
         <p>ABI of the NFT Contract</p>
         <TextArea
           type="text"
           placeholder="contract abi"
-          width={300}
+          width={500}
           height={200}
-          onChange={(event) => setContractABI(event.target.value)}
-        /> */}
+          value={contractABI} onChange={({ value }) => setContractABI(value)}
+        />
         <p>Please provide list of recipients</p>
         <TextArea
           type="text"
-          width={300}
+          width={500}
           height={200}
           placeholder="address list and tokenId, see example. "
-          value={airdropLines} onChange={({ value }) => {
-            setAirdropLines(value)
-          }}
+          value={airdropLines} onChange={({ value }) => setAirdropLines(value)}
         />
         {airdropLines}
         <p>example:</p>

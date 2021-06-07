@@ -5,8 +5,6 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 
 const default_contract_abi = require('../contract-abi.json')
-// const contractAddress = "0x7d43900f2045914fd2585a6996754c5a6c67ad60";  // 第一次
-// const contractAddress = "0x0B96BD17BE722e0958E4a37c027f57C88e5CaaeA"; // 第2次
 const default_contractAddress = "0x6a7115bb32120C67120AD9B62869de859b9fA657"; // 第3次
 
 export const connectWallet = async () => {
@@ -170,7 +168,7 @@ export const transNFT = async ({ recipient, tokenId, contractAddress = default_c
 }
 
 export const multiSender = async ({airdrops, contractAddress = default_contractAddress,  contractABI = default_contract_abi }) => {
-    console.log('multiSender: ', airdrops)
+    console.log('multiSender: ', airdrops, contractAddress, contractABI)
     //loadContract();
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);
     
